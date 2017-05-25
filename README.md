@@ -108,8 +108,8 @@ handler -= "myHandler"
 
 *Do not forget that `[]` does not accept `null` values - that is why `-=`/`remove` is used instead.*
 
-Unnamed handlers are assigned a name equivalent to the string representation of the current listener count, starting
-from zero.
+Unnamed handlers are assigned an integral name equivalent to the amount of unnamed handlers added so far, starting from
+zero.
 
 To handle an event, use the `()` operator on the event (JVM name: `handle`):
 
