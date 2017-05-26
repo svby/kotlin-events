@@ -1,4 +1,4 @@
-import kotlinx.Event;
+import kotlinx.event.Event;
 import org.testng.annotations.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,7 +18,7 @@ public class JavaTest {
     }
 
     @Test
-    public void testJava() {
+    public void testEvents() {
         final Event<ServerData> event = new Event<>();
         final AtomicInteger count = new AtomicInteger();
 
