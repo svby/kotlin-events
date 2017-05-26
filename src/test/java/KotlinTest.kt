@@ -1,5 +1,4 @@
-import kotlinx.Event
-import kotlinx.EventHandler
+import kotlinx.event.Event
 import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
 
@@ -8,7 +7,7 @@ class KotlinTest {
     data class ServerEvent(val joined: Boolean, val user: String)
 
     @Test
-    fun events() {
+    fun testEvents() {
         val event = Event<ServerEvent>()
         var userCount = 0
 

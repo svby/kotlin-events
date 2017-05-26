@@ -1,41 +1,43 @@
-package kotlinx
+package kotlinx.event
 
-typealias EventHandler<EventType> = java.util.function.Consumer<EventType>
+import java.util.function.Consumer
 
-internal operator fun <T> java.util.function.Consumer<T>.invoke(t: T) = accept(t)
+typealias Handler<EventType> = Consumer<EventType>
 
-class Event<T> : Iterable<MutableMap.MutableEntry<String, EventHandler<T>>> {
+internal operator fun <T> Handler<T>.invoke(t: T) = accept(t)
 
-    private val list = java.util.LinkedHashMap<String, EventHandler<T>>()
+class Event<T> : Iterable<MutableMap.MutableEntry<String, Handler<T>>> {
+
+    private val list = LinkedHashMap<String, Handler<T>>()
 
     var nextUnnamedIndex = 0L
         private set
 
     val size: Int @JvmName("size") get() = list.size
-    val listeners: MutableCollection<MutableMap.MutableEntry<String, EventHandler<T>>> get() = list.entries
+    val listeners: MutableCollection<MutableMap.MutableEntry<String, Handler<T>>> get() = list.entries
 
     fun clear() = list.clear()
 
     override operator fun iterator() = list.iterator()
 
     @JvmName("add")
-    operator fun plusAssign(handler: EventHandler<T>) {
+    operator fun plusAssign(handler: Handler<T>) {
         list.put("${nextUnnamedIndex++}", handler)
     }
 
     @JvmName("put")
-    operator fun set(name: String, handler: EventHandler<T>) {
+    operator fun set(name: String, handler: Handler<T>) {
         list.put(name, handler)
     }
 
     @JvmName("add")
     inline operator fun plusAssign(crossinline handler: (T) -> Unit) {
-        this += java.util.function.Consumer { handler(it) }
+        this += Handler { handler(it) }
     }
 
     @JvmName("put")
     inline operator fun set(name: String, crossinline handler: (T) -> Unit) {
-        this[name] = java.util.function.Consumer { handler(it) }
+        this[name] = Handler { handler(it) }
     }
 
     @JvmName("remove")
