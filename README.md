@@ -51,28 +51,24 @@ Can we do better?
 Of course we can, using our favorite language. Here's the Kotlin equivalent, using `events`:
 
 ```kotlin
-class Test {
+data class ServerEvent(val joined: Boolean, val user: String)
 
-    data class ServerEvent(val joined: Boolean, val user: String)
+fun main(args: Array<String>) {
+    val event = Event<ServerEvent>()
+    var userCount = 0
 
-    fun main(args: Array<String>) {
-        val event = Event<ServerEvent>()
-        var userCount = 0
+    event += { (joined, user) -> println("$user ${if (joined) "joined" else "left"}") }
+    event += { userCount += if (it.joined) 1 else -1 }
 
-        event += { (joined, user) -> println("$user ${if (joined) "joined" else "left"}") }
-        event += { userCount += if (it.joined) 1 else -1 }
-        
-        event(ServerEvent(true, "Alice"))
-        event(ServerEvent(true, "Bob"))
-        event(ServerEvent(true, "Charles"))
-        
-        println("Users: $userCount")
-        
-        event(ServerEvent(false, "Bob"))
-        
-        println("Users: $userCount")
-    }
+    event(ServerEvent(true, "Alice"))
+    event(ServerEvent(true, "Bob"))
+    event(ServerEvent(true, "Charles"))
 
+    println("Users: $userCount")
+
+    event(ServerEvent(false, "Bob"))
+
+    println("Users: $userCount")
 }
 ```
 
