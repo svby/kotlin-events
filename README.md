@@ -1,13 +1,12 @@
-# Kotlin Events
+# Kotlin events
 
-`kotlinx.events` is a simple event library for Kotlin (and thereby Java and all other JVM languages) which is designed
-to be intuitive and similar in design to C#'s event features.
+`kotlinx.events` is a simple event library for Kotlin which is designed to be intuitive and similar in design to C#'s
+event features.
 
 A typical C# event handling system looks like this:
 
 ```cs
 using System;
-using System.Diagnostics;
 
 namespace EventTest {
     public struct ServerEvent { ... }
@@ -17,7 +16,7 @@ namespace EventTest {
     internal class Program {
         private static event EventHandler Event;
 
-        public static void Main(string[] args) {
+        private static void Main() {
             var count = 0;
             Event += data => Console.WriteLine($"{data.Name} {(data.Joined ? "joined" : "left")}");
             Event += data => count += data.Joined ? 1 : -1;
@@ -51,73 +50,32 @@ Can we do better?
 Of course we can, using our favorite language. Here's the Kotlin equivalent, using `events`:
 
 ```kotlin
-data class ServerEvent(val joined: Boolean, val user: String)
+data class ServerEvent(val name: String, val joined: Boolean)
 
-fun main(args: Array<String>) {
-    val event = Event<ServerEvent>()
-    var userCount = 0
+val event = event<ServerEvent>()
+var count = 0
 
-    event += { (joined, user) -> println("$user ${if (joined) "joined" else "left"}") }
-    event += { userCount += if (it.joined) 1 else -1 }
+fun main() {
+    event += { (name, joined) ->
+        count += if (joined) 1 else -1
+        println("$name ${if (joined) "joined" else "left"} (total: $count)")
+    }
 
-    event(ServerEvent(true, "Alice"))
-    event(ServerEvent(true, "Bob"))
-    event(ServerEvent(true, "Charles"))
+    event(ServerEvent("Alice", true))
+    event(ServerEvent("Bob", true))
+    event(ServerEvent("Charles", true))
 
-    println("Users: $userCount")
-
-    event(ServerEvent(false, "Bob"))
-
-    println("Users: $userCount")
+    event(ServerEvent("Bob", false))
 }
 ```
 
-The syntax is practically identical, but now you can use it in your JVM projects with little modification.
+The syntax is similar, but now you can use it in your JVM projects with little modification.
 
-`events` also includes some extra features to make certain things easier!
+## Usage
 
-## Features
+The top-level functions `event` and `namedEvent` can be used to initialize standard set-backed events and
+`Map<String, (T) -> Unit>`-backed events respectively.
 
-You can easily create an event handler with the `Event` class - that's it.
+The `MapEvent` type allows retrieving and adding events ("named events") by a string key.
 
-```kotlin
-val handler = Event<MyType>()
-```
-
-Now you can add event handlers to this class using the `+=` operator (JVM name: `add`):
-
-```kotlin
-handler += { data -> /* do something */ }
-```
-
-The event handlers can even be named with the `[]` operator (JVM name: `put`):
-
-```kotlin
-handler["myHandler"] = { data -> /* do something */ }
-```
-
-These named handlers can be removed via the `-=` operator (JVM name: `remove`),
-
-```kotlin
-handler -= "myHandler"
-```
-
-*Do not forget that `[]` does not accept `null` values - that is why `-=`/`remove` is used instead.*
-
-Unnamed handlers are assigned an integral name equivalent to the amount of unnamed handlers added so far, starting from
-zero.
-
-To handle an event, use the `()` operator on the event (JVM name: `handle`):
-
-```kotlin
-handler(MyEvent(...))
-```
-
-`Event` also implements `Iterable<MutableEntry<String, EventHandler<T>>>`, so you can iterate all handlers.
-
-### Additional
-
-Methods have been renamed with `@JvmName` and accept `java.util.function.Consumer`s, so using `events`
-from other JVM languages is definitely an option!
-
-Java test code can be found in the `test` package.
+The base interface `Event` is a collection type, and can be used accordingly.
