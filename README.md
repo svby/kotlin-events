@@ -79,3 +79,24 @@ The top-level functions `event` and `namedEvent` can be used to initialize stand
 The `MapEvent` type allows retrieving and adding events ("named events") by a string key.
 
 The base interface `Event` is a collection type, and can be used accordingly.
+
+## Maven
+
+You can retrieve this artifact from [JitPack](https://jitpack.io/):
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+...
+	
+<dependency>
+    <groupId>com.github.halcyxn</groupId>
+    <artifactId>kotlin-events</artifactId>
+    <version>v2.0</version>
+</dependency>
+```
