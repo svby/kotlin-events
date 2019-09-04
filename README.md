@@ -85,17 +85,15 @@ The base interface `Event` is a collection type, and can be used accordingly.
 You can retrieve this artifact from [JitPack](https://jitpack.io/):
 
 ```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
 
 ...
 	
 <dependency>
-    <groupId>com.github.halcyxn</groupId>
+    <groupId>com.github.stuhlmeier</groupId>
     <artifactId>kotlin-events</artifactId>
     <version>v2.0</version>
 </dependency>
