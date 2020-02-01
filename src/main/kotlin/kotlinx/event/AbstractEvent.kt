@@ -4,14 +4,18 @@ abstract class AbstractEvent<T> : Event<T> {
 
     @JvmSynthetic
     override operator fun plusAssign(handler: (T) -> Unit) {
-        add(handler)
+        synchronized(this) {
+            add(handler)
+        }
     }
 
     @JvmSynthetic
     override operator fun minusAssign(handler: (T) -> Unit) {
-        remove(handler)
+        synchronized(this) {
+            remove(handler)
+        }
     }
 
-    override fun invoke(data: T) = forEach { it(data) }
+    override fun invoke(data: T) = synchronized(this) { forEach { it(data) } }
 
 }
